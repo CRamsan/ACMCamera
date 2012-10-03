@@ -1,6 +1,5 @@
-package org.ndacm.org;
+package com.cesarandres.acmcamera;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,8 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 public class Connector {
 
@@ -73,13 +70,11 @@ public class Connector {
 			// Responses from the server (code and message)
 			int serverResponseCode = connection.getResponseCode();
 			String serverResponseMessage = connection.getResponseMessage();
-			Log.i("Connector", serverResponseMessage);
 			
 			fileInputStream.close();
 			outputStream.flush();
 			outputStream.close();
 		} catch (Exception ex) {
-			Log.d("Connector","Error Message: " + ex.getMessage());
 		}
 	}
 }

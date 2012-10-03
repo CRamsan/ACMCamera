@@ -1,4 +1,4 @@
-package org.ndacm.org;
+package com.cesarandres.acmcamera;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +18,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -51,7 +50,6 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// get an image from the camera
-				Log.i(TAG, "Touch, calling takePicture");
 				if (focusCall) {
 					mCamera.autoFocus(mAutofocus);
 				} else {
@@ -118,7 +116,6 @@ public class MainActivity extends Activity {
 				// set Camera parameters
 				c.setParameters(params);
 				focusCall = true;
-				Log.i(TAG, "Focus mode set to Continuous Picture");
 			} else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
 				// Autofocus mode is supported
 
@@ -127,7 +124,6 @@ public class MainActivity extends Activity {
 				// set Camera parameters
 				c.setParameters(params);
 				focusCall = true;
-				Log.i(TAG, "Focus mode set to Auto");
 			} else if (focusModes
 					.contains(Camera.Parameters.FOCUS_MODE_INFINITY)) {
 				// Autofocus mode is supported
@@ -137,7 +133,6 @@ public class MainActivity extends Activity {
 				// set Camera parameters
 				c.setParameters(params);
 				focusCall = false;
-				Log.i(TAG, "Focus mode set to Infinity");
 			}
 		} catch (Exception e) {
 			// Camera is not available (in use or does not exist)
@@ -164,7 +159,6 @@ public class MainActivity extends Activity {
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.d(TAG, "failed to create directory");
 				return null;
 			}
 		}
@@ -190,8 +184,6 @@ public class MainActivity extends Activity {
 
 			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 			if (pictureFile == null) {
-				Log.d(TAG,
-						"Error creating media file, check storage permissions");
 				return;
 			}
 
@@ -201,9 +193,7 @@ public class MainActivity extends Activity {
 				fos.close();
 				new UploadFilesTask().execute(pictureFile);
 			} catch (FileNotFoundException e) {
-				Log.d(TAG, "File not found: " + e.getMessage());
 			} catch (IOException e) {
-				Log.d(TAG, "Error accessing file: " + e.getMessage());
 			}
 			mPreview.updateCamera(mCamera);
 		}
@@ -244,7 +234,6 @@ public class MainActivity extends Activity {
 				mCamera.setPreviewDisplay(holder);
 				mCamera.startPreview();
 			} catch (IOException e) {
-				Log.d(TAG, "Error setting camera preview: " + e.getMessage());
 			}
 		}
 
@@ -282,7 +271,6 @@ public class MainActivity extends Activity {
 				mCamera.startPreview();
 
 			} catch (Exception e) {
-				Log.d(TAG, "Error starting camera preview: " + e.getMessage());
 			}
 		}
 
@@ -300,7 +288,6 @@ public class MainActivity extends Activity {
 				mCamera.startPreview();
 
 			} catch (Exception e) {
-				Log.d(TAG, "Error starting camera preview: " + e.getMessage());
 			}
 		}
 	}
