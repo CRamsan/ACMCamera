@@ -5,15 +5,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Region;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +26,10 @@ import android.os.Environment;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
 
@@ -33,7 +41,7 @@ public class MainActivity extends Activity {
 	private CameraPreview mPreview;
 	private boolean focusCall = false;
 	private MainActivity activity = this;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,6 +66,40 @@ public class MainActivity extends Activity {
 
 			}
 		});
+
+		((ToggleButton) findViewById(R.id.toggleButtonFLash))
+				.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						Camera.Parameters params = mCamera.getParameters();
+						if (isChecked) {
+							List<String> flashModes = params
+									.getSupportedFlashModes();
+
+							if (flashModes
+									.contains(Camera.Parameters.FLASH_MODE_AUTO)) {
+								params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+								// set Camera parameters
+							} else if (flashModes
+									.contains(Camera.Parameters.FLASH_MODE_ON)) {
+								params.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+								// set Camera parameters
+							}
+						} else {
+							List<String> flashModes = params
+									.getSupportedFlashModes();
+
+							if (flashModes
+									.contains(Camera.Parameters.FLASH_MODE_OFF)) {
+								params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+								// set Camera parameters
+								focusCall = true;
+							}
+						}
+
+						mCamera.setParameters(params);
+					}
+				});
 
 	}
 
@@ -114,7 +156,6 @@ public class MainActivity extends Activity {
 				// set the focus mode
 				params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 				// set Camera parameters
-				c.setParameters(params);
 				focusCall = true;
 			} else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
 				// Autofocus mode is supported
@@ -122,7 +163,6 @@ public class MainActivity extends Activity {
 				// set the focus mode
 				params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 				// set Camera parameters
-				c.setParameters(params);
 				focusCall = true;
 			} else if (focusModes
 					.contains(Camera.Parameters.FOCUS_MODE_INFINITY)) {
@@ -131,9 +171,25 @@ public class MainActivity extends Activity {
 				// set the focus mode
 				params.setFocusMode(Camera.Parameters.FOCUS_MODE_INFINITY);
 				// set Camera parameters
-				c.setParameters(params);
 				focusCall = false;
 			}
+
+			List<Camera.Size> pictureSizes = params.getSupportedPictureSizes();
+			Camera.Size bestSize = null;
+			for (Camera.Size size : pictureSizes) {
+				if (bestSize == null) {
+					bestSize = size;
+				} else {
+					if (bestSize.width <= size.width
+							&& bestSize.height <= size.height) {
+						bestSize = size;
+					}
+				}
+			}
+			params.setPictureSize(bestSize.width, bestSize.height);
+
+			c.setParameters(params);
+
 		} catch (Exception e) {
 			// Camera is not available (in use or does not exist)
 		}
@@ -191,7 +247,19 @@ public class MainActivity extends Activity {
 				FileOutputStream fos = new FileOutputStream(pictureFile);
 				fos.write(data);
 				fos.close();
-				new UploadFilesTask().execute(pictureFile);
+
+				ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+				NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+				if (((ToggleButton) findViewById(R.id.toggleButtonAutoUpload))
+						.isChecked()) {
+					if (networkInfo != null && networkInfo.isConnected()) {
+						new UploadFilesTask().execute(pictureFile);
+					} else {
+						Toast.makeText(activity, "No network connection",
+								Toast.LENGTH_SHORT).show();
+					}
+				}
 			} catch (FileNotFoundException e) {
 			} catch (IOException e) {
 			}
@@ -292,15 +360,26 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	 private class UploadFilesTask extends AsyncTask<File, Void, Void> {
+	private class UploadFilesTask extends AsyncTask<File, Void, Void> {
+
+		@Override
+		protected void onPreExecute() {
+			Toast.makeText(activity, "Upload task started", Toast.LENGTH_SHORT)
+					.show();
+		}
 
 		@Override
 		protected Void doInBackground(File... params) {
-			Connector.UploadPicture(activity,params[0]);
+			Connector.UploadPicture(activity, params[0]);
 			return null;
 		}
-		 
-		 
-	 }
-	
+
+		@Override
+		protected void onPostExecute(Void none) {
+			Toast.makeText(activity, "Upload task completed",
+					Toast.LENGTH_SHORT).show();
+		}
+
+	}
+
 }

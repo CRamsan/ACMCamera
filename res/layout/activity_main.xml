@@ -1,6 +1,37 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/camera_preview"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" android:baselineAligned="false">
 
-</FrameLayout>
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1" >
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical" >
+
+        <ToggleButton
+            android:id="@+id/toggleButtonAutoUpload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textOff="AutoUpload Off"
+            android:textOn="AutoUpload On" />
+
+        <ToggleButton
+            android:id="@+id/toggleButtonFLash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textOff="FLash Off"
+            android:textOn="FLash On" />
+
+    </LinearLayout>
+
+</LinearLayout>

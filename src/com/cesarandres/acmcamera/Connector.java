@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.content.Context;
+import android.widget.Toast;
 
 public class Connector {
 
