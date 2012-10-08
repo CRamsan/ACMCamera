@@ -7,13 +7,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.content.Context;
-import android.widget.Toast;
 
 public class Connector {
 
 	public final static String UPLOADURL = "http://cesarandres.com/wiki/index.php";
 
-	public static void UploadPicture(Context context, File file) {
+	public static boolean UploadPicture(Context context, File file) {
 		HttpURLConnection connection = null;
 		DataOutputStream outputStream = null;
 		
@@ -69,13 +68,16 @@ public class Connector {
 					+ lineEnd);
 
 			// Responses from the server (code and message)
-			int serverResponseCode = connection.getResponseCode();
-			String serverResponseMessage = connection.getResponseMessage();
+			//int serverResponseCode = connection.getResponseCode();
+			//String serverResponseMessage = connection.getResponseMessage();
 			
 			fileInputStream.close();
 			outputStream.flush();
 			outputStream.close();
+			
+			return true;
 		} catch (Exception ex) {
+			return false;
 		}
 	}
 }

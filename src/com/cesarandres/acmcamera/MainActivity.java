@@ -5,15 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Region;
-import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
@@ -26,6 +24,7 @@ import android.os.Environment;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -34,7 +33,6 @@ import android.widget.ToggleButton;
 public class MainActivity extends Activity {
 
 	public static final int MEDIA_TYPE_IMAGE = 1;
-	public static final int MEDIA_TYPE_VIDEO = 2;
 	public static final String TAG = "MainActivity";
 
 	private Camera mCamera;
@@ -53,8 +51,7 @@ public class MainActivity extends Activity {
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(mPreview);
 
-		// Add a listener to the Capture button
-		preview.setOnClickListener(new View.OnClickListener() {
+		((Button) findViewById(R.id.buttonShutter)).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// get an image from the camera
@@ -63,10 +60,9 @@ public class MainActivity extends Activity {
 				} else {
 					mCamera.takePicture(null, null, mPicture);
 				}
-
 			}
-		});
-
+		});	
+		
 		((ToggleButton) findViewById(R.id.toggleButtonFLash))
 				.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 					public void onCheckedChanged(CompoundButton buttonView,
@@ -100,6 +96,13 @@ public class MainActivity extends Activity {
 						mCamera.setParameters(params);
 					}
 				});
+		
+		((Button) findViewById(R.id.buttonSettings)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(activity, SettingsActivity.class));
+			}
+		});
 
 	}
 
@@ -118,7 +121,7 @@ public class MainActivity extends Activity {
 		super.onPause();
 		releaseCamera(); // release the camera immediately on pause event
 	}
-
+		
 	private void releaseCamera() {
 		if (mCamera != null) {
 			mCamera.release(); // release the camera for other applications
@@ -208,7 +211,8 @@ public class MainActivity extends Activity {
 		// using Environment.getExternalStorageState() before doing this.
 
 		File mediaStorageDir = new File(
-				Environment.getExternalStorageDirectory(), "ACMCamera");
+				Environment.getExternalStorageDirectory(), "ACMCamera"
+						+ File.separator + "WaitingToUpload");
 		// This location works best if you want the created images to be shared
 		// between applications and persist after your app has been uninstalled.
 
@@ -264,7 +268,7 @@ public class MainActivity extends Activity {
 			} catch (IOException e) {
 			}
 			mPreview.updateCamera(mCamera);
-		}
+		}				
 	};
 
 	private AutoFocusCallback mAutofocus = new AutoFocusCallback() {
@@ -370,7 +374,18 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected Void doInBackground(File... params) {
-			Connector.UploadPicture(activity, params[0]);
+			File fileToUpload = params[0];
+			if (Connector.UploadPicture(activity, fileToUpload)) {
+				File mediaStorageCompleted = new File(
+						Environment.getExternalStorageDirectory(), "ACMCamera");
+				// Create the storage directory if it does not exist
+				if (!mediaStorageCompleted.exists()) {
+					if (!mediaStorageCompleted.mkdirs()) {
+						return null;
+					}
+				}				
+				fileToUpload.renameTo(new File(mediaStorageCompleted, fileToUpload.getName()));
+			}			
 			return null;
 		}
 

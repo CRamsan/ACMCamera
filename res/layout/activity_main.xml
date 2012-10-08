@@ -1,7 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal" android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:orientation="horizontal" >
 
     <FrameLayout
         android:id="@+id/camera_preview"
@@ -10,28 +11,51 @@
         android:layout_weight="1" >
     </FrameLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical" >
+        android:layout_height="match_parent" >
 
-        <ToggleButton
-            android:id="@+id/toggleButtonAutoUpload"
+        <LinearLayout
+            android:id="@+id/linearLayout1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:textOff="AutoUpload Off"
-            android:textOn="AutoUpload On" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical" >
 
-        <ToggleButton
-            android:id="@+id/toggleButtonFLash"
+            <ToggleButton
+                android:id="@+id/toggleButtonAutoUpload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:textOff="AutoUpload Off"
+                android:textOn="AutoUpload On" />
+
+            <ToggleButton
+                android:id="@+id/toggleButtonFLash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textOff="FLash Off"
+                android:textOn="FLash On" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/buttonSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textOff="FLash Off"
-            android:textOn="FLash On" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/settings" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/buttonShutter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/shoot" />
+
+    </RelativeLayout>
 
 </LinearLayout>
