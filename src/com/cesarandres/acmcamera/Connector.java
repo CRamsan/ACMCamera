@@ -7,15 +7,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.content.Context;
+import android.content.*;
+import android.app.*;
+import android.preference.*;
 
-public class Connector {
+public class Connector
+{
 
-	public final static String UPLOADURL = "http://cesarandres.com/wiki/index.php";
+	//public final static String UPLOADURL = "http://cesarandres.com/wiki/index.php";
 
-	public static boolean UploadPicture(Context context, File file) {
+	public static boolean UploadPicture(Context context, File file)
+	{
 		HttpURLConnection connection = null;
 		DataOutputStream outputStream = null;
-		
+
 		String lineEnd = "\r\n";
 		String twoHyphens = "--";
 		String boundary = "*****";
@@ -24,10 +29,14 @@ public class Connector {
 		byte[] buffer;
 		int maxBufferSize = 1 * 1024 * 1024;
 
-		try {
+		try
+		{
 			FileInputStream fileInputStream = new FileInputStream(file);
 
-			URL url = new URL(UPLOADURL);
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+			URL url = new URL(settings.getString(context.getResources().getString(R.string.keyUploadURL), ""));
+
+			
 			connection = (HttpURLConnection) url.openConnection();
 
 			// Allow Inputs & Outputs
@@ -40,12 +49,12 @@ public class Connector {
 
 			connection.setRequestProperty("Connection", "Keep-Alive");
 			connection.setRequestProperty("Content-Type",
-					"multipart/form-data;boundary=" + boundary);
+										  "multipart/form-data;boundary=" + boundary);
 
 			outputStream = new DataOutputStream(connection.getOutputStream());
 			outputStream.writeBytes(twoHyphens + boundary + lineEnd);
 			outputStream
-					.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
+				.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\""
 							+ file.getAbsolutePath() + "\"" + lineEnd);
 			outputStream.writeBytes(lineEnd);
 
@@ -56,7 +65,8 @@ public class Connector {
 			// Read file
 			bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
-			while (bytesRead > 0) {
+			while (bytesRead > 0)
+			{
 				outputStream.write(buffer, 0, bufferSize);
 				bytesAvailable = fileInputStream.available();
 				bufferSize = Math.min(bytesAvailable, maxBufferSize);
@@ -65,18 +75,20 @@ public class Connector {
 
 			outputStream.writeBytes(lineEnd);
 			outputStream.writeBytes(twoHyphens + boundary + twoHyphens
-					+ lineEnd);
+									+ lineEnd);
 
 			// Responses from the server (code and message)
 			//int serverResponseCode = connection.getResponseCode();
 			//String serverResponseMessage = connection.getResponseMessage();
-			
+
 			fileInputStream.close();
 			outputStream.flush();
 			outputStream.close();
-			
+
 			return true;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex)
+		{
 			return false;
 		}
 	}
