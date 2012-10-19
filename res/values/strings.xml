@@ -12,6 +12,7 @@
     <string name="uploadNow">Upload Now</string>
     <string name="keyContributorsName">keyContributorsName</string>
     <string name="keyUploadURL">keyuploadurl</string>
+	<string name="keyUploadNow">keyuploadnow</string>		
     <string name="keyPassword">keypassword</string>
     <string name="keyAutomaticUpload">keyautomaticupload</string>
     <string name="hello_world">Hello world!</string>

@@ -9,7 +9,7 @@
     <PreferenceCategory android:title="@string/uploadPreferences" android:enabled="false">
         <CheckBoxPreference android:title="@string/automaticUpload" android:key="@string/keyAutomaticUpload"/>
 
-        <Preference android:title="@string/uploadNow"/>
+        <Preference android:title="@string/uploadNow" android:key="@string/keyUploadNow"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
