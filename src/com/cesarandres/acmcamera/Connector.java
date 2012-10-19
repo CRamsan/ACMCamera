@@ -1,20 +1,13 @@
 package com.cesarandres.acmcamera;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import android.content.Context;
 import android.content.*;
-import android.app.*;
 import android.preference.*;
+import android.util.*;
+import java.io.*;
+import java.net.*;
 
 public class Connector
 {
-
-	//public final static String UPLOADURL = "http://cesarandres.com/wiki/index.php";
 
 	public static boolean UploadPicture(Context context, File file)
 	{
@@ -34,9 +27,8 @@ public class Connector
 			FileInputStream fileInputStream = new FileInputStream(file);
 
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-			URL url = new URL(settings.getString(context.getResources().getString(R.string.keyUploadURL), ""));
-
-			
+			String urlToUpload = settings.getString(context.getResources().getString(R.string.keyUploadURL), "");
+			URL url = new URL(urlToUpload);
 			connection = (HttpURLConnection) url.openConnection();
 
 			// Allow Inputs & Outputs
@@ -78,9 +70,11 @@ public class Connector
 									+ lineEnd);
 
 			// Responses from the server (code and message)
-			//int serverResponseCode = connection.getResponseCode();
-			//String serverResponseMessage = connection.getResponseMessage();
+			int serverResponseCode = connection.getResponseCode();
+			String serverResponseMessage = connection.getResponseMessage();
 
+			Log.i("Connector", serverResponseCode + ": " + serverResponseMessage);
+			
 			fileInputStream.close();
 			outputStream.flush();
 			outputStream.close();

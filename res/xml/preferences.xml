@@ -2,11 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory android:title="@string/profile" >
-        <EditTextPreference android:title="@string/contributorsName" android:key="@string/keyContributorsName"/>
+        <EditTextPreference android:title="@string/contributorsName" android:key="@string/keyContributorsName" android:enabled="false"/>
         <EditTextPreference android:title="@string/uploadURL" android:key="@string/keyUploadURL"/>
-        <EditTextPreference android:title="@string/password" android:key="@string/keyPassword"/>
+        <EditTextPreference android:title="@string/password" android:key="@string/keyPassword" android:enabled="false"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/uploadPreferences" >
+    <PreferenceCategory android:title="@string/uploadPreferences" android:enabled="false">
         <CheckBoxPreference android:title="@string/automaticUpload" android:key="@string/keyAutomaticUpload"/>
 
         <Preference android:title="@string/uploadNow"/>
