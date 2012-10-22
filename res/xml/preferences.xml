@@ -6,7 +6,7 @@
         <EditTextPreference android:title="@string/uploadURL" android:key="@string/keyUploadURL"/>
         <EditTextPreference android:title="@string/password" android:key="@string/keyPassword" android:enabled="false"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/uploadPreferences" android:enabled="false">
+    <PreferenceCategory android:title="@string/uploadPreferences" >
         <CheckBoxPreference android:title="@string/automaticUpload" android:key="@string/keyAutomaticUpload"/>
 
         <Preference android:title="@string/uploadNow" android:key="@string/keyUploadNow"/>

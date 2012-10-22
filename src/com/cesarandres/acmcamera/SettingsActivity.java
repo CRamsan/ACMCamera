@@ -1,5 +1,7 @@
 package com.cesarandres.acmcamera;
 
+import android.content.*;
+import android.net.*;
 import android.os.*;
 import android.preference.*;
 import android.preference.Preference.*;
@@ -8,6 +10,11 @@ import java.io.*;
 
 public class SettingsActivity extends PreferenceActivity
 {
+	private static final int TASK_COMPLETED= 1;
+	private static final int TASK_FAILED_SOME_UPLOADED = 3;
+	private static final int TASK_FAILED_NOTHING_UPLOADED = 5;
+	private static final int TASK_NOT_STARTED = 6;
+	private static final int TASK_NO_CONNECTION = 7;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -31,8 +38,8 @@ public class SettingsActivity extends PreferenceActivity
 	private class UploadFilesTask extends AsyncTask<Void, Void, Void>
 	{
 
-		private boolean taskCompleted = false;
-
+		private int taskCompleted = TASK_FAILED_NOTHING_UPLOADED;
+		private int uploadCounter = 0;
 		@Override
 		protected void onPreExecute()
 		{
@@ -47,6 +54,15 @@ public class SettingsActivity extends PreferenceActivity
 			File mediaStorageDir = new File(
 				Environment.getExternalStorageDirectory(), "ACMCamera"
 				+ File.separator + "WaitingToUpload");
+
+			ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+			if (networkInfo == null || !networkInfo.isConnected())
+			{
+				taskCompleted = TASK_NO_CONNECTION;
+				return null;
+			}
 
 			if (mediaStorageDir.exists() && mediaStorageDir.isDirectory() && mediaStorageDir.listFiles().length > 0)
 			{
@@ -64,10 +80,17 @@ public class SettingsActivity extends PreferenceActivity
 							{
 								break;
 							}
-						}				
+						}
+						uploadCounter++;
+						taskCompleted = TASK_FAILED_SOME_UPLOADED;
 						fileToUpload.renameTo(new File(mediaStorageCompleted, fileToUpload.getName()));
 					}			
 				}
+				taskCompleted = TASK_COMPLETED;
+			}
+			else
+			{
+				taskCompleted = TASK_NOT_STARTED;
 			}
 			return null;
 		}
@@ -75,16 +98,30 @@ public class SettingsActivity extends PreferenceActivity
 		@Override
 		protected void onPostExecute(Void none)
 		{
-			if (taskCompleted)
+			switch (taskCompleted)
 			{
-				Toast.makeText(getApplicationContext(), "Upload task completed",
-							   Toast.LENGTH_SHORT).show();
-			}
-			else
-			{
-				Toast.makeText(getApplicationContext(), "Upload task failed",
-							   Toast.LENGTH_SHORT).show();
-			}
+				case TASK_COMPLETED:
+					Toast.makeText(getApplicationContext(), "Upload task completed, "  + uploadCounter  + " pictures uploaded",
+								   Toast.LENGTH_SHORT).show();
+					break;
+				case TASK_FAILED_SOME_UPLOADED:
+					Toast.makeText(getApplicationContext(), "Upload task failed, " + uploadCounter  + " pictures uploaded",
+								   Toast.LENGTH_SHORT).show();
+					break;
+				case TASK_NO_CONNECTION:
+					Toast.makeText(getApplicationContext(), "No connection",
+								   Toast.LENGTH_SHORT).show();
+					break;
+				case TASK_NOT_STARTED:
+					Toast.makeText(getApplicationContext(), "Nothing to upload",
+								   Toast.LENGTH_SHORT).show();
+					break;
+				case TASK_FAILED_NOTHING_UPLOADED:
+					Toast.makeText(getApplicationContext(), "Upload task failed",
+								   Toast.LENGTH_SHORT).show();
+					break;
+			}		
+			
 			findPreference(getResources().getString(R.string.keyUploadNow)).setEnabled(true);
 		}
 

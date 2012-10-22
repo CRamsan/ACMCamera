@@ -1,34 +1,18 @@
 package com.cesarandres.acmcamera;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.hardware.Camera;
-import android.hardware.Camera.AutoFocusCallback;
-import android.hardware.Camera.PictureCallback;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.FrameLayout;
-import android.widget.Toast;
-import android.widget.ToggleButton;
+import android.app.*;
+import android.content.*;
+import android.content.pm.*;
+import android.hardware.*;
+import android.hardware.Camera.*;
+import android.net.*;
+import android.os.*;
+import android.preference.*;
+import android.view.*;
+import android.widget.*;
+import java.io.*;
+import java.text.*;
+import java.util.*;
 
 public class MainActivity extends Activity
 {
@@ -128,6 +112,11 @@ public class MainActivity extends Activity
 	protected void onResume()
 	{
 		super.onResume();
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean autoUpload = settings.getBoolean(this.getResources().getString(R.string.keyAutomaticUpload), false);
+		((ToggleButton) findViewById(R.id.toggleButtonAutoUpload)).setChecked(autoUpload);		
+
 		if (checkCameraHardware(this))
 		{
 			// Create an instance of Camera
@@ -151,6 +140,16 @@ public class MainActivity extends Activity
 	{
 		super.onPause();
 		releaseCamera(); // release the camera immediately on pause event
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = settings.edit();
+
+		boolean autoUpload = ((ToggleButton) findViewById(R.id.toggleButtonAutoUpload)).isChecked();
+
+		editor.putBoolean(this.getResources().getString(R.string.keyAutomaticUpload), autoUpload);
+
+		// Commit the edits!
+		editor.commit();
 	}
 
 	private void releaseCamera()
