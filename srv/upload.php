@@ -3,11 +3,11 @@
 $code = "secUre";
 $name = "";
 
-/*if($_POST["code"] != $code)
+if($_POST["code"] != $code)
 {
 	echo "Incorrect code";
 	exit;
-}*/
+}
 
 if (!isset($_POST["name"]) || $_POST["name"] == "" )
 {
