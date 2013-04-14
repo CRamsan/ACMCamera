@@ -60,6 +60,7 @@ if ( (($_FILES["file"]["type"] == "image/gif")
 
 		$orig_file = "uploads/original/" . $_FILES["file"]["name"];
 		$thumb_file = "uploads/".$_FILES["file"]["name"];
+		$file_name = $_FILES["file"]["name"];
 
 		$thumb = new Imagick();
 		$thumb->readImage($orig_file);
@@ -71,7 +72,7 @@ if ( (($_FILES["file"]["type"] == "image/gif")
 
 		$index = "uploads/index.html";
 		$fh = fopen($index, 'a') or die("can't open file");
-	        $newLine = '<img src="$thumb_file" alt="random image" />'."<br /><br />";
+	        $newLine = $file_name . "<br /><img src=\"" . $file_name . "\" alt=\"random image\" /><br /><br />\n";
 		fwrite($fh, $newLine);
 		fclose($fh);
 	}
