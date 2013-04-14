@@ -1,6 +1,6 @@
 <?php
 
-$code = "secUre";
+$code = "12345";
 $name = "";
 
 if($_POST["code"] != $code)
@@ -48,15 +48,32 @@ if ( (($_FILES["file"]["type"] == "image/gif")
 		echo "Type: " . $_FILES["file"]["type"] . "<br />";
 		echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
 		echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br />";
-		if (file_exists("uploads/" . $_FILES["file"]["name"]))
+		if (file_exists("uploads/original" . $_FILES["file"]["name"]))
 		{
 			echo $_FILES["file"]["name"] . " already exists. ";
 		}
 		else
 		{
-			move_uploaded_file($_FILES["file"]["tmp_name"], "uploads/" . $_FILES["file"]["name"]);
-			echo "Stored in: " . "uploads/" . $_FILES["file"]["name"];
+			move_uploaded_file($_FILES["file"]["tmp_name"], "uploads/original/" . $_FILES["file"]["name"]);
+			echo "Stored in: " . "uploads/original/" . $_FILES["file"]["name"];
 		}
+
+		$orig_file = "uploads/original/" . $_FILES["file"]["name"];
+		$thumb_file = "uploads/".$_FILES["file"]["name"];
+
+		$thumb = new Imagick();
+		$thumb->readImage($orig_file);
+		$thumb->resizeImage(640,480,Imagick::FILTER_LANCZOS,1);
+		$thumb->writeImage($thumb_file);
+		$thumb->clear();
+		$thumb->destroy();
+
+
+		$index = "uploads/index.html";
+		$fh = fopen($index, 'a') or die("can't open file");
+	        $newLine = '<img src="$thumb_file" alt="random image" />'."<br /><br />";
+		fwrite($fh, $newLine);
+		fclose($fh);
 	}
 }
 else

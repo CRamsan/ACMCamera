@@ -3,7 +3,7 @@ $files = glob("*.*");
 for ($i=0; $i<count($files); $i++)
 {
 	$num = $files[$i];
-	if($num == "index.php" || $num == "index.html")
+	if($num == "index.php")
 	{
 		continue;
 	}
