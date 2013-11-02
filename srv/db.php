@@ -6,5 +6,26 @@ $db->exec('CREATE TABLE IF NOT EXISTS photos (uuid TEXT, contributor TEXT, date 
 $stmt = $db->prepare('SELECT * FROM photos');
 
 $result = $stmt->execute();
-var_dump($result->fetchArray());
+header('Content-Type:application/json');
+echo "{\"photos\":[";
+$first = TRUE;
+while($res = $result->fetchArray())
+{
+  if(!isset($res['uuid']))
+  {
+    continue;
+  }
+  if($first)
+  {
+    $first=FALSE;
+  }
+  else
+  {
+    echo ",";
+  }
+  echo "{\"uuid\":\"".$res['uuid']."\",";
+  echo "\"contributor\":\"".$res['contributor']."\",";
+  echo "\"uploaded\":\"".$res['date']."\"}";
+}
+echo "]}";
 ?>
