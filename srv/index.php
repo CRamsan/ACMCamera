@@ -1,4 +1,21 @@
 <?php
+
+$pass = "sigmobi";
+
+if($_POST["password"] != $pass)
+{
+  echo "Not authorized"
+  return;
+}
+
+if($_POST["name"] === null)
+{
+  $contributor = "ACM Member";
+}else{
+  $contributor = $_POST["name"];
+}
+
+
 $allowedExts = array("jpg", "jpeg", "gif", "png");
 $extension = end(explode(".", $_FILES["file"]["name"]));
 if ((($_FILES["file"]["type"] == "image/gif")
@@ -20,15 +37,23 @@ if ((($_FILES["file"]["type"] == "image/gif")
     echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br />";
 
     var_dump($_FILES);
-    if (file_exists("uploads/" . $_FILES["file"]["name"]))
+    $uploadUUID = uniqid();
+    $uploadedFile = "uploads/original/" . $uploadUUID;
+    if (file_exists($uploadedFile))
     {
-      echo $_FILES["file"]["name"] . " already exists. ";
+      echo $_FILES["file"]["name"] . " Collision detected, try uploading again.. ";
     }
     else
     {
-      move_uploaded_file($_FILES["file"]["tmp_name"],
-      "uploads/" . $_FILES["file"]["name"]);
-      echo "Stored in: " . "uploads/" . $_FILES["file"]["name"];
+      move_uploaded_file($_FILES["file"]["tmp_name"],$uploadedFile);
+      echo "Stored in: " . $uploadedFile;
+      $upload = new Imagick(glob($uploadedFile));
+      $upload->thumbnailImage(200, 0);
+      $upload->writeImage("uploads/" . $uploadUUID);
+
+      $db = new SQLite3('acmcaemra.db');
+      $db->exec('CREATE TABLE IF NOT EXISTS photos (id INTEGER, contributor TEXT, date INTEGER)');
+      $db->exec("INSERT INTO photos (id,contributor,date) VALUES (".$uploadUUID.", ".$contributor.",".time().")");
     }
   }
 }
