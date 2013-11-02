@@ -4,7 +4,7 @@ $pass = "sigmobi";
 
 if($_POST["password"] != $pass)
 {
-  echo "Not authorized"
+  echo "Not authorized";
   return;
 }
 
@@ -51,9 +51,9 @@ if ((($_FILES["file"]["type"] == "image/gif")
       $upload->thumbnailImage(200, 0);
       $upload->writeImage("uploads/" . $uploadUUID);
 
-      $db = new SQLite3('acmcaemra.db');
-      $db->exec('CREATE TABLE IF NOT EXISTS photos (id INTEGER, contributor TEXT, date INTEGER)');
-      $db->exec("INSERT INTO photos (id,contributor,date) VALUES (".$uploadUUID.", ".$contributor.",".time().")");
+      $db = new SQLite3('acmcamera.db');
+      $db->exec('CREATE TABLE IF NOT EXISTS photos (uuid TEXT, contributor TEXT, date INTEGER)');
+      $db->exec("INSERT INTO photos (uuid,contributor,date) VALUES ('".$uploadUUID."', '".$contributor."',".time().")");
     }
   }
 }
