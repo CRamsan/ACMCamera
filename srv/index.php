@@ -8,7 +8,7 @@ if($_POST["password"] != $pass)
   return;
 }
 
-if($_POST["name"] === null)
+if($_POST["name"] === null || $_POST["name"] == "")
 {
   $contributor = "ACM Member";
 }else{
@@ -18,13 +18,21 @@ if($_POST["name"] === null)
 
 $allowedExts = array("jpg", "jpeg", "gif", "png");
 $extension = end(explode(".", $_FILES["file"]["name"]));
-if ((($_FILES["file"]["type"] == "image/gif")
-|| ($_FILES["file"]["type"] == "image/jpeg")
-|| ($_FILES["file"]["type"] == "image/png")
-|| ($_FILES["file"]["type"] == "image/pjpeg"))
-&& ($_FILES["file"]["size"] < 2000000)
-&& in_array($extension, $allowedExts))
+if (
+/*(($_FILES["file"]["type"] == "image/gif")
+||($_FILES["file"]["type"] == "image/jpg")
+||($_FILES["file"]["type"] == "image/jpeg")
+||($_FILES["file"]["type"] == "image/png")
+||($_FILES["file"]["type"] == "image/pjpeg"))
+&&*/ 
+in_array($extension, $allowedExts))
 {
+  if($_FILES["file"]["size"] > 10485760)
+  {
+    echo "File is too big\n";
+    echo "File Size:".$_FILES["file"]["size"];
+    exit;
+  }
   if ($_FILES["file"]["error"] > 0)
   {
     echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
