@@ -1,6 +1,9 @@
 package com.cesarandres.acmcamera;
-import android.app.*;
-import org.acra.*;
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
+
+import android.app.Application;
 
 @ReportsCrashes(formKey="",
 	mailTo = "cesar.ramsan@gmail.com",

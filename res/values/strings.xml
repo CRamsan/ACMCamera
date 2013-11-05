@@ -12,12 +12,16 @@
     <string name="uploadNow">Upload Now</string>
     <string name="keyContributorsName">keyContributorsName</string>
     <string name="keyUploadURL">keyuploadurl</string>
-	<string name="keyUploadNow">keyuploadnow</string>		
+    <string name="keyUploadNow">keyuploadnow</string>
     <string name="keyPassword">keypassword</string>
     <string name="keyAutomaticUpload">keyautomaticupload</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="settings">Settings</string>
     <string name="shoot">Shoot!</string>
-
+    <string name="crash_toast_text">crash_toast_text</string>
+    <string name="crash_dialog_text">crash_dialog_text</string>
+    <string name="crash_dialog_title">crash_dialog_title</string>
+    <string name="crash_dialog_comment_prompt">crash_dialog_comment</string>
+    <string name="crash_dialog_ok_toast">crash_dialog_ok_toast</string>
 </resources>
