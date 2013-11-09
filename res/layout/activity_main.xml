@@ -56,6 +56,13 @@
             android:layout_centerVertical="true"
             android:text="@string/shoot" />
 
+        <Button
+            android:id="@+id/buttonGallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/buttonSettings"
+            android:layout_centerHorizontal="true"
+            android:text="Gallery" />
     </RelativeLayout>
 
 </LinearLayout>

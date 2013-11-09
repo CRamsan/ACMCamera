@@ -1,7 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:padding="5dp" >
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/networImageView"
@@ -11,10 +12,17 @@
         android:scaleType="centerInside" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/textViewName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Medium Text"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textViewDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>

@@ -44,7 +44,7 @@ public class Connector {
 			String password = settings.getString(context.getResources()
 					.getString(R.string.keyPassword), "");
 
-			URL url = new URL(urlToUpload);
+			URL url = new URL(urlToUpload + "/index.php");
 			connection = (HttpURLConnection) url.openConnection();
 
 			// Allow Inputs & Outputs

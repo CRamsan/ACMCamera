@@ -98,6 +98,16 @@ public class MainActivity extends Activity
 			});
 
 
+		((Button) findViewById(R.id.buttonGallery)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				Intent intent = new Intent(MainActivity.this, GalleryActivity.class);
+				startActivity(intent);
+				
+			}
+		});	
+		
 		((Button) findViewById(R.id.buttonSettings)).setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v)
