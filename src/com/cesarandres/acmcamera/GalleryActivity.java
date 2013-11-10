@@ -4,11 +4,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -62,6 +65,17 @@ public class GalleryActivity extends Activity {
 						GalleryAdapter adapter = new GalleryAdapter(
 								GalleryActivity.this, response.getPhotos());
 						listRoot.setAdapter(adapter);
+						listRoot.setOnItemClickListener(new OnItemClickListener() {
+
+							@Override
+							public void onItemClick(AdapterView<?> arg0,
+									View arg1, int arg2, long arg3) {
+								String uuid = ((Picture)arg0.getItemAtPosition(arg2)).getUuid();
+								Intent i = new Intent(GalleryActivity.this, PreviewActivity.class);
+								i.putExtra("uuid", uuid);
+								startActivity(i);
+							}
+						});
 					}
 				}
 			};

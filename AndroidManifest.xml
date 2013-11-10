@@ -42,6 +42,11 @@
             android:name="com.cesarandres.acmcamera.GalleryActivity"
             android:label="@string/title_activity_gallery" >
         </activity>
+        <activity
+            android:name="com.cesarandres.acmcamera.PreviewActivity"
+            android:label="@string/title_activity_gallery"
+            android:theme="@style/AppThemeDialog" >
+        </activity>
     </application>
 
 </manifest>
