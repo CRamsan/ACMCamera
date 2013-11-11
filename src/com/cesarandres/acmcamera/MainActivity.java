@@ -1,18 +1,37 @@
 package com.cesarandres.acmcamera;
 
-import android.app.*;
-import android.content.*;
-import android.content.pm.*;
-import android.hardware.*;
-import android.hardware.Camera.*;
-import android.net.*;
-import android.os.*;
-import android.preference.*;
-import android.view.*;
-import android.widget.*;
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.PictureCallback;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.FrameLayout;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 public class MainActivity extends Activity
 {
@@ -24,37 +43,34 @@ public class MainActivity extends Activity
 	private CameraPreview mPreview;
 	private boolean focusCall = false;
 	private MainActivity activity = this;
+	private boolean cancelFocusCall;
+	private boolean resetFocus;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
+		
 		// Create our Preview view and set it as the content of our
 		// activity.
 		mPreview = new CameraPreview(this);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
 		preview.addView(mPreview);
-
-		((Button) findViewById(R.id.buttonShutter)).setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v)
-				{
-					// get an image from the camera
-					if (focusCall)
-					{
-						mCamera.autoFocus(mAutofocus);
-					}
-					else
-					{
-						mCamera.takePicture(null, null, mPicture);
-					}
+		
+		((Button) findViewById(R.id.buttonShutter)).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if(focusCall){
+					mCamera.autoFocus(mAutofocus);
 				}
-			});	
+			}
+		});
 
-		((ToggleButton) findViewById(R.id.toggleButtonFLash)).setEnabled(false);
-		((ToggleButton) findViewById(R.id.toggleButtonFLash)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		((ToggleButton) findViewById(R.id.toggleButtonFlash)).setEnabled(false);
+		((ToggleButton) findViewById(R.id.toggleButtonFlash)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 				public void onCheckedChanged(CompoundButton buttonView,
 											 boolean isChecked)
 				{
@@ -89,7 +105,6 @@ public class MainActivity extends Activity
 						{
 							params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
 							// set Camera parameters
-							focusCall = true;
 						}
 					}
 
@@ -135,11 +150,11 @@ public class MainActivity extends Activity
 			List<String> flashModes = params.getSupportedFlashModes();
 			if (flashModes == null)
 			{
-				((ToggleButton) findViewById(R.id.toggleButtonFLash)).setEnabled(false);			
+				((ToggleButton) findViewById(R.id.toggleButtonFlash)).setEnabled(false);			
 			}
 			else
 			{
-				((ToggleButton) findViewById(R.id.toggleButtonFLash)).setEnabled(true);
+				((ToggleButton) findViewById(R.id.toggleButtonFlash)).setEnabled(true);
 			}
 		}
 		mPreview.updateCamera(mCamera);		
@@ -209,6 +224,7 @@ public class MainActivity extends Activity
 				params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 				// set Camera parameters
 				focusCall = true;
+				resetFocus = true;
 			}
 			else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO))
 			{
@@ -218,6 +234,7 @@ public class MainActivity extends Activity
 				params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 				// set Camera parameters
 				focusCall = true;
+				resetFocus = false;
 			}
 			else if (focusModes
 					 .contains(Camera.Parameters.FOCUS_MODE_INFINITY))
@@ -228,6 +245,7 @@ public class MainActivity extends Activity
 				params.setFocusMode(Camera.Parameters.FOCUS_MODE_INFINITY);
 				// set Camera parameters
 				focusCall = false;
+				resetFocus = false;
 			}
 
 			List<Camera.Size> pictureSizes = params.getSupportedPictureSizes();
@@ -321,13 +339,13 @@ public class MainActivity extends Activity
 				FileOutputStream fos = new FileOutputStream(pictureFile);
 				fos.write(data);
 				fos.close();
-
-				ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-				NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
 				if (((ToggleButton) findViewById(R.id.toggleButtonAutoUpload))
 					.isChecked())
 				{
+					ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+					NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+					
 					if (networkInfo != null && networkInfo.isConnected())
 					{
 						new UploadFilesTask().execute(pictureFile);
@@ -355,6 +373,7 @@ public class MainActivity extends Activity
 		public void onAutoFocus(boolean success, Camera camera)
 		{
 			camera.takePicture(null, null, mPicture);
+			if(resetFocus) camera.cancelAutoFocus();
 		}
 	};
 

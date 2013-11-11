@@ -32,12 +32,12 @@
                 android:textOn="AutoUpload On" />
 
             <ToggleButton
-                android:id="@+id/toggleButtonFLash"
+                android:id="@+id/toggleButtonFlash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textOff="FLash Off"
-                android:textOn="FLash On" />
+                android:textOff="Flash Off"
+                android:textOn="Flash On" />
         </LinearLayout>
 
         <Button
